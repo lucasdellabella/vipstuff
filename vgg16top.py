@@ -2,6 +2,7 @@ import numpy as np
 from keras.models import Sequential
 from keras.optimizers import SGD
 from keras.layers import Dense, Conv2D, MaxPooling2D, ZeroPadding2D, Dropout, Flatten
+from keras.applications.vgg16 import preprocess_input, decode_predictions
 from keras.layers.normalization import BatchNormalization
 
 def load_data():
@@ -25,15 +26,15 @@ def load_data():
 def vgg16_regression_model(label_dimension):
     """VGG 16 Regression Model for Keras
 
-    Model Schema is based on 
+    Model Schema is based on
     https://gist.github.com/baraldilorenzo/07d7802847aaad0a35d3
 
-    ImageNet Pretrained Weights 
+    ImageNet Pretrained Weights
     https://drive.google.com/file/d/0Bz7KyqmuGsilT0J5dmRCM0ROVHc/view?usp=sharing
 
     Parameters:
       img_rows, img_cols - resolution of inputs
-      channel - 1 for grayscale, 3 for color 
+      channel - 1 for grayscale, 3 for color
       num_classes - number of categories for our classification/regression task
     """
     model = Sequential()
@@ -94,10 +95,10 @@ def vgg16_regression_model(label_dimension):
 
     return model
 
-###### MAIN CODE ###### 
-label_dimension = 10 
-batch_size = 512 
-epochs = 200
+###### MAIN CODE ######
+label_dimension = 10
+batch_size = 512
+epochs = 30
 
 # Load our model, with first 4 conv blocks frozen
 
@@ -121,6 +122,5 @@ model.fit(X_train, y_train,
 model.save('imagenet_models\\split_model_TOP.h5')
 
 # Make predictions
-predictions_valid = model.predict(X_test, batch_size=batch_size, verbose=1)
-
-print(predictions_valid)
+predictions_test = model.predict(X_test, batch_size=batch_size, verbose=1)
+predictions_test_decoded = decode_predictions(predictions_test, top=10)
