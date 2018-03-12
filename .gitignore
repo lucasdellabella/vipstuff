@@ -1,0 +1,12 @@
+train_prediction_txts/
+valid/
+train/
+test/
+rat-data/
+new_dataset/
+matrixized_data/
+imagenet_models/
+test_cropped.tar
+train_cropped.tar
+.DS_Store
+__pycache__
