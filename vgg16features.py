@@ -41,6 +41,14 @@ def load_data():
     y_valid = np.load(y_valid_file)
     y_test = np.load(y_test_file)
 
+    # C: Manually squash samples into -1/2 to 1/2
+    def squash(arr):
+        return np.array([(x - 112) / 224 for x in arr])
+
+    y_train = np.array([squash(sample) for sample in y_train])
+    y_valid = np.array([squash(sample) for sample in y_valid])
+    y_test = np.array([squash(sample) for sample in y_test])
+
     return (X_train, y_train), (X_valid, y_valid), (X_test, y_test)
 
 def vgg16_regression_model(img_rows, img_cols, channel=1, num_classes=None):
@@ -152,15 +160,15 @@ if __name__ == "__main__":
     X_test -= VGG_TRAIN_MEANS
 
     # Start Fine-tuning
-    #model.fit(X_train, y_train,
-              #batch_size=batch_size,
-              #epochs=epochs,
-              #shuffle=True,
-              #verbose=1,
-              #validation_data=(X_valid, y_valid),
-              #)
+    model.fit(X_train, y_train,
+              batch_size=batch_size,
+              epochs=epochs,
+              shuffle=True,
+              verbose=1,
+              validation_data=(X_valid, y_valid)
+              )
 
-    #model.save('imagenet_models/trained_regression_model_25epoch.h5')
+    model.save('imagenet_models/trained_regression_model_25epoch.h5')
 
     # Make predictions
     predictions_train = model.predict(X_train, batch_size=batch_size, verbose=1)
